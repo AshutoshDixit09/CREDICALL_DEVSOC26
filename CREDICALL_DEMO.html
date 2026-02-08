@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrediCall - Every call tells a story. We make sure it tells the truth.</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Color palette from reference */
+        :root {
+            --coral: #E74C5C;
+            --cream: #F5F3E8;
+            --light-teal: #9DD8D0;
+            --medium-teal: #5B9AA6;
+            --navy: #2C3E50;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #5B9AA6 0%, #9DD8D0 50%, #5B9AA6 100%);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #5B9AA6 0%, #9DD8D0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .dark .card-hover:hover {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .risk-green {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        .risk-yellow {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        
+        .risk-red {
+            background: linear-gradient(135deg, #E74C5C 0%, #d64555 100%);
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        
+        .upload-zone {
+            border: 2px dashed #9DD8D0;
+            transition: all 0.3s ease;
+            background-color: #F5F3E8;
+        }
+        
+        .dark .upload-zone {
+            border-color: #5B9AA6;
+            background-color: #2C3E50;
+        }
+        
+        .upload-zone.dragover {
+            border-color: #5B9AA6;
+            background-color: #ffffff;
+        }
+        
+        .dark .upload-zone.dragover {
+            background-color: #3a4f5f;
+        }
+        
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+        
+        /* Dark mode toggle switch */
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .toggle-switch.active {
+            background: #2C3E50;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(30px);
+        }
+
+        .bg-cream {
+            background-color: #F5F3E8;
+        }
+
+        .bg-coral {
+            background-color: #E74C5C;
+        }
+
+        .bg-light-teal {
+            background-color: #9DD8D0;
+        }
+
+        .bg-medium-teal {
+            background-color: #5B9AA6;
+        }
+
+        .bg-navy {
+            background-color: #2C3E50;
+        }
+
+        .text-coral {
+            color: #E74C5C;
+        }
+
+        .text-navy {
+            color: #2C3E50;
+        }
+
+        .text-medium-teal {
+            color: #5B9AA6;
+        }
+
+        .border-coral {
+            border-color: #E74C5C;
+        }
+
+        .border-light-teal {
+            border-color: #9DD8D0;
+        }
+
+        .border-medium-teal {
+            border-color: #5B9AA6;
+        }
+
+        .border-navy {
+            border-color: #2C3E50;
+        }
+
+        /* Audio waveform animation */
+        .waveform {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            height: 60px;
+        }
+
+        .wave-bar {
+            width: 4px;
+            background: linear-gradient(180deg, #9DD8D0 0%, #5B9AA6 100%);
+            border-radius: 2px;
+            animation: wave 1.2s ease-in-out infinite;
+        }
+
+        .wave-bar:nth-child(1) { animation-delay: 0s; height: 20px; }
+        .wave-bar:nth-child(2) { animation-delay: 0.1s; height: 35px; }
+        .wave-bar:nth-child(3) { animation-delay: 0.2s; height: 50px; }
+        .wave-bar:nth-child(4) { animation-delay: 0.3s; height: 30px; }
+        .wave-bar:nth-child(5) { animation-delay: 0.4s; height: 45px; }
+        .wave-bar:nth-child(6) { animation-delay: 0.5s; height: 25px; }
+        .wave-bar:nth-child(7) { animation-delay: 0.6s; height: 40px; }
+        .wave-bar:nth-child(8) { animation-delay: 0.7s; height: 55px; }
+        .wave-bar:nth-child(9) { animation-delay: 0.8s; height: 35px; }
+        .wave-bar:nth-child(10) { animation-delay: 0.9s; height: 28px; }
+
+        @keyframes wave {
+            0%, 100% { transform: scaleY(0.5); opacity: 0.5; }
+            50% { transform: scaleY(1); opacity: 1; }
+        }
+
+        /* Circular progress for credibility score */
+        .circular-progress {
+            position: relative;
+            width: 140px;
+            height: 140px;
+        }
+
+        .circular-progress svg {
+            transform: rotate(-90deg);
+        }
+
+        .circular-progress circle {
+            fill: none;
+            stroke-width: 10;
+        }
+
+        .progress-bg {
+            stroke: #2C3E50;
+            opacity: 0.2;
+        }
+
+        .progress-bar-circle {
+            stroke: #10b981;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease;
+        }
+
+        /* Gauge animation */
+        @keyframes gaugeRotate {
+            from { transform: rotate(-90deg); }
+            to { transform: rotate(calc(-90deg + var(--rotation))); }
+        }
+
+        .gauge-needle {
+            animation: gaugeRotate 1.5s ease-out forwards;
+        }
+
+        /* Real-time processing indicator */
+        .processing-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Transcript highlight animation */
+        .highlight-claim {
+            background: linear-gradient(90deg, transparent 0%, rgba(157, 216, 208, 0.3) 50%, transparent 100%);
+            animation: highlightSweep 2s ease-in-out;
+            border-bottom: 2px solid #5B9AA6;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+
+        @keyframes highlightSweep {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Mock API call simulation
+        const mockProcessCall = async (file) => {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({
+                        transcript: "Hello sir, I understand your concern. I want to assure you that I will make the payment by the 15th of February. My textile business has been experiencing some temporary cash flow issues due to delayed payments from our clients, but we have confirmed orders coming in next week. I've been running this business for 8 years and have always maintained good credit. I just need a few more days to arrange the funds.",
+                        payment_promise: true,
+                        payment_date: "15 Feb 2026",
+                        business_type: "Textile Manufacturing",
+                        stress_level: "Medium",
+                        business_verified: true,
+                        registered_industry: "Textile Manufacturing & Trading",
+                        risk_band: "Low",
+                        credibility_score: 0.82,
+                        risk_flag: "Yellow",
+                        payment_intent: "High",
+                        insights: [
+                            { type: "positive", text: "8 years of business history mentioned" },
+                            { type: "positive", text: "Specific payment date committed (15 Feb)" },
+                            { type: "neutral", text: "Cash flow issues cited as reason" },
+                            { type: "positive", text: "Business verified via Backboard.io" }
+                        ]
+                    });
+                }, 2000);
+            });
+        };
+
+        function App() {
+            const [currentView, setCurrentView] = useState('login');
+            const [email, setEmail] = useState('');
+            const [password, setPassword] = useState('');
+            const [showPassword, setShowPassword] = useState(false);
+            const [file, setFile] = useState(null);
+            const [processing, setProcessing] = useState(false);
+            const [result, setResult] = useState(null);
+            const [dragOver, setDragOver] = useState(false);
+            const [darkMode, setDarkMode] = useState(false);
+
+            // Initialize dark mode from localStorage
+            useEffect(() => {
+                const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+                setDarkMode(savedDarkMode);
+                if (savedDarkMode) {
+                    document.documentElement.classList.add('dark');
+                }
+            }, []);
+
+            // Toggle dark mode
+            const toggleDarkMode = () => {
+                const newDarkMode = !darkMode;
+                setDarkMode(newDarkMode);
+                localStorage.setItem('darkMode', newDarkMode);
+                if (newDarkMode) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            };
+
+            const handleLogin = (e) => {
+                e.preventDefault();
+                if (email && password) {
+                    setCurrentView('dashboard');
+                }
+            };
+
+            const handleFileSelect = (e) => {
+                const selectedFile = e.target.files[0];
+                if (selectedFile) {
+                    setFile(selectedFile);
+                }
+            };
+
+            const handleDrop = (e) => {
+                e.preventDefault();
+                setDragOver(false);
+                const droppedFile = e.dataTransfer.files[0];
+                if (droppedFile && (droppedFile.type === 'audio/mpeg' || droppedFile.type === 'audio/wav')) {
+                    setFile(droppedFile);
+                }
+            };
+
+            const handleProcessCall = async () => {
+                if (!file) return;
+                
+                setProcessing(true);
+                const analysisResult = await mockProcessCall(file);
+                setResult(analysisResult);
+                setProcessing(false);
+            };
+
+            const getRiskColor = (flag) => {
+                if (flag === 'Green') return 'risk-green';
+                if (flag === 'Yellow') return 'risk-yellow';
+                return 'risk-red';
+            };
+
+            if (currentView === 'login') {
+                return (
+                    <div className="min-h-screen gradient-bg flex items-center justify-center p-4">
+                        {/* Dark Mode Toggle - Top Right */}
+                        <div className="absolute top-6 right-6 flex items-center space-x-3">
+                            <i className={`fas fa-sun text-white ${!darkMode ? 'opacity-100' : 'opacity-50'}`}></i>
+                            <div 
+                                className={`toggle-switch ${darkMode ? 'active' : ''}`}
+                                onClick={toggleDarkMode}
+                            >
+                                <div className="toggle-slider"></div>
+                            </div>
+                            <i className={`fas fa-moon text-white ${darkMode ? 'opacity-100' : 'opacity-50'}`}></i>
+                        </div>
+
+                        <div className="w-full max-w-md">
+                            <div className="glass-effect rounded-2xl p-8 shadow-2xl">
+                                <div className="text-center mb-8">
+                                    <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full mb-4 shadow-lg">
+                                        <i className="fas fa-phone-volume text-4xl text-medium-teal"></i>
+                                    </div>
+                                    <h1 className="text-3xl font-bold text-white mb-2">CrediCall</h1>
+                                    <p className="text-white text-opacity-90 text-sm">
+                                        Every call tells a story. We make sure it tells the truth.
+                                    </p>
+                                </div>
+
+                                <form onSubmit={handleLogin} className="space-y-5">
+                                    <div>
+                                        <label className="block text-white text-sm font-medium mb-2">
+                                            Email Address
+                                        </label>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <i className="fas fa-envelope text-gray-400"></i>
+                                            </div>
+                                            <input
+                                                type="email"
+                                                value={email}
+                                                onChange={(e) => setEmail(e.target.value)}
+                                                className="w-full pl-10 pr-4 py-3 bg-white bg-opacity-20 backdrop-blur-sm border border-white border-opacity-30 rounded-lg text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 transition"
+                                                placeholder="abc@mail.com"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-white text-sm font-medium mb-2">
+                                            Password
+                                        </label>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <i className="fas fa-lock text-gray-400"></i>
+                                            </div>
+                                            <input
+                                                type={showPassword ? "text" : "password"}
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                                className="w-full pl-10 pr-12 py-3 bg-white bg-opacity-20 backdrop-blur-sm border border-white border-opacity-30 rounded-lg text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 transition"
+                                                placeholder="•••"
+                                                required
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                className="absolute inset-y-0 right-0 pr-3 flex items-center text-white text-opacity-70 hover:text-opacity-100 transition"
+                                            >
+                                                <i className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center justify-between text-sm">
+                                        <label className="flex items-center text-white cursor-pointer">
+                                            <input type="checkbox" className="mr-2 rounded" />
+                                            <span>Remember me</span>
+                                        </label>
+                                        <a href="#" className="text-white hover:text-opacity-80 transition">
+                                            Forgot password?
+                                        </a>
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        className="w-full py-3 bg-cream text-medium-teal font-bold rounded-lg hover:bg-opacity-90 transition transform hover:scale-105 shadow-lg"
+                                    >
+                                        Sign In
+                                    </button>
+                                </form>
+
+                                <div className="mt-6 text-center">
+                                    <p className="text-white text-sm">
+                                        Don't have an account?{' '}
+                                        <a href="#" className="font-semibold hover:text-opacity-80 transition">
+                                            Sign up
+                                        </a>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="mt-6 text-center text-white text-opacity-75 text-xs">
+                                <p>Powered by AI | Secured & Encrypted</p>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="min-h-screen bg-cream dark:bg-gray-900 transition-colors duration-300">
+                    {/* Header */}
+                    <div className="gradient-bg shadow-lg">
+                        <div className="max-w-7xl mx-auto px-4 py-6">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-4">
+                                    <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg">
+                                        <i className="fas fa-phone-volume text-2xl text-medium-teal"></i>
+                                    </div>
+                                    <div>
+                                        <h1 className="text-2xl font-bold text-white">CrediCall Dashboard</h1>
+                                        <p className="text-sm text-white text-opacity-80">AI-Powered Call Analysis</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center space-x-4">
+                                    {/* Dark Mode Toggle */}
+                                    <div className="flex items-center space-x-2">
+                                        <i className={`fas fa-sun text-white ${!darkMode ? 'opacity-100' : 'opacity-50'}`}></i>
+                                        <div 
+                                            className={`toggle-switch ${darkMode ? 'active' : ''}`}
+                                            onClick={toggleDarkMode}
+                                        >
+                                            <div className="toggle-slider"></div>
+                                        </div>
+                                        <i className={`fas fa-moon text-white ${darkMode ? 'opacity-100' : 'opacity-50'}`}></i>
+                                    </div>
+                                    <div className="hidden md:flex items-center space-x-3 text-white">
+                                        <div className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                                            <i className="fas fa-user"></i>
+                                        </div>
+                                        <span className="font-medium">{email}</span>
+                                    </div>
+                                    <button
+                                        onClick={() => setCurrentView('login')}
+                                        className="px-4 py-2 bg-coral text-white rounded-lg hover:bg-opacity-90 transition"
+                                    >
+                                        <i className="fas fa-sign-out-alt mr-2"></i>
+                                        Logout
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Main Content */}
+                    <div className="max-w-7xl mx-auto px-4 py-8">
+                        {!file && !result && (
+                            <div className="max-w-2xl mx-auto">
+                                <div className="text-center mb-8">
+                                    <h2 className="text-3xl font-bold text-navy dark:text-white mb-2">Upload Collection Call Recording</h2>
+                                    <p className="text-gray-600 dark:text-gray-400">Upload an audio file to analyze call credibility and extract insights</p>
+                                </div>
+
+                                <div
+                                    className={`upload-zone rounded-xl p-12 text-center cursor-pointer ${dragOver ? 'dragover' : ''}`}
+                                    onDrop={handleDrop}
+                                    onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                                    onDragLeave={() => setDragOver(false)}
+                                    onClick={() => document.getElementById('fileInput').click()}
+                                >
+                                    <i className="fas fa-cloud-upload-alt text-6xl text-medium-teal mb-4"></i>
+                                    <h3 className="text-xl font-semibold text-navy dark:text-gray-300 mb-2">
+                                        Drop your audio file here
+                                    </h3>
+                                    <p className="text-gray-500 dark:text-gray-400 mb-4">or click to browse</p>
+                                    <p className="text-sm text-gray-400 dark:text-gray-500">Supported formats: MP3, WAV</p>
+                                    <input
+                                        id="fileInput"
+                                        type="file"
+                                        accept="audio/mp3,audio/wav"
+                                        onChange={handleFileSelect}
+                                        className="hidden"
+                                    />
+                                </div>
+
+                                <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center shadow-md border-2 border-light-teal">
+                                        <i className="fas fa-brain text-3xl text-medium-teal mb-2"></i>
+                                        <h4 className="font-semibold text-navy dark:text-white mb-1">AI Analysis</h4>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">Advanced NLP processing</p>
+                                    </div>
+                                    <div className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center shadow-md border-2 border-navy">
+                                        <i className="fas fa-shield-alt text-3xl text-navy dark:text-blue-400 mb-2"></i>
+                                        <h4 className="font-semibold text-navy dark:text-white mb-1">Business Verification</h4>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">Powered by Backboard.io</p>
+                                    </div>
+                                    <div className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center shadow-md border-2 border-coral">
+                                        <i className="fas fa-chart-line text-3xl text-coral mb-2"></i>
+                                        <h4 className="font-semibold text-navy dark:text-white mb-1">Risk Assessment</h4>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">Instant credibility scoring</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {file && !processing && !result && (
+                            <div className="max-w-2xl mx-auto">
+                                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 border-2 border-light-teal">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <div className="flex items-center space-x-4">
+                                            <div className="w-16 h-16 bg-medium-teal rounded-full flex items-center justify-center">
+                                                <i className="fas fa-file-audio text-3xl text-white"></i>
+                                            </div>
+                                            <div>
+                                                <h3 className="text-xl font-bold text-navy dark:text-white">{file.name}</h3>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                                    {(file.size / 1024 / 1024).toFixed(2)} MB
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => setFile(null)}
+                                            className="text-gray-400 hover:text-coral transition"
+                                        >
+                                            <i className="fas fa-times text-2xl"></i>
+                                        </button>
+                                    </div>
+
+                                    {/* Audio Waveform Visualization */}
+                                    <div className="bg-cream dark:bg-gray-700 rounded-lg p-6 mb-6">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <span className="text-sm font-medium text-navy dark:text-gray-300">
+                                                <i className="fas fa-music mr-2 text-medium-teal"></i>
+                                                Audio Preview
+                                            </span>
+                                            <span className="text-xs text-gray-500 dark:text-gray-400">Ready to analyze</span>
+                                        </div>
+                                        <div className="waveform">
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        onClick={handleProcessCall}
+                                        className="w-full py-4 bg-coral text-white font-bold rounded-lg hover:opacity-90 transition transform hover:scale-105 shadow-lg"
+                                    >
+                                        <i className="fas fa-play-circle mr-2"></i>
+                                        Start Analysis
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {processing && (
+                            <div className="max-w-4xl mx-auto">
+                                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 border-2 border-light-teal">
+                                    <div className="text-center mb-8">
+                                        <h3 className="text-2xl font-bold text-navy dark:text-white mb-2">Processing Call...</h3>
+                                        <p className="text-gray-600 dark:text-gray-400">
+                                            Our AI is analyzing the conversation and verifying business claims
+                                        </p>
+                                    </div>
+
+                                    {/* Live Audio Waveform */}
+                                    <div className="bg-navy dark:bg-gray-900 rounded-lg p-8 mb-6">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className="flex items-center space-x-2">
+                                                <div className="processing-dot"></div>
+                                                <span className="text-sm font-medium text-white">AUDIO TRANSCRIPT</span>
+                                            </div>
+                                            <span className="text-xs text-green-400">Processed</span>
+                                        </div>
+                                        <div className="waveform mb-4">
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                            <div className="wave-bar"></div>
+                                        </div>
+                                        <div className="text-sm text-gray-300">
+                                            <span className="text-cyan-400">Agent (00:12)</span>
+                                            <p className="mt-1">...regarding the outstanding balance of $2,400 on your account.</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Processing Steps */}
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                        <div className="bg-cream dark:bg-gray-700 rounded-lg p-4">
+                                            <div className="flex items-center space-x-3 mb-2">
+                                                <i className="fas fa-check-circle text-green-500 text-xl"></i>
+                                                <span className="font-semibold text-navy dark:text-white">Transcribing</span>
+                                            </div>
+                                            <div className="w-full bg-gray-300 dark:bg-gray-600 rounded-full h-2">
+                                                <div className="bg-green-500 h-2 rounded-full" style={{width: '100%'}}></div>
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-cream dark:bg-gray-700 rounded-lg p-4">
+                                            <div className="flex items-center space-x-3 mb-2">
+                                                <i className="fas fa-check-circle text-green-500 text-xl"></i>
+                                                <span className="font-semibold text-navy dark:text-white">Extracting Claims</span>
+                                            </div>
+                                            <div className="w-full bg-gray-300 dark:bg-gray-600 rounded-full h-2">
+                                                <div className="bg-green-500 h-2 rounded-full" style={{width: '100%'}}></div>
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-cream dark:bg-gray-700 rounded-lg p-4">
+                                            <div className="flex items-center space-x-3 mb-2">
+                                                <i className="fas fa-spinner fa-spin text-medium-teal text-xl"></i>
+                                                <span className="font-semibold text-navy dark:text-white">Verifying</span>
+                                            </div>
+                                            <div className="w-full bg-gray-300 dark:bg-gray-600 rounded-full h-2">
+                                                <div className="bg-medium-teal h-2 rounded-full animate-pulse" style={{width: '65%'}}></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Real-time insights */}
+                                    <div className="bg-cream dark:bg-gray-700 rounded-lg p-4">
+                                        <h4 className="font-semibold text-navy dark:text-white mb-3 flex items-center">
+                                            <i className="fas fa-lightbulb mr-2 text-yellow-500"></i>
+                                            Real-time Detection
+                                        </h4>
+                                        <div className="space-y-2 text-sm">
+                                            <div className="flex items-center space-x-2 text-green-600 dark:text-green-400">
+                                                <i className="fas fa-check-circle"></i>
+                                                <span>Payment promise detected</span>
+                                            </div>
+                                            <div className="flex items-center space-x-2 text-yellow-600 dark:text-yellow-400">
+                                                <i className="fas fa-exclamation-triangle"></i>
+                                                <span>Hardship claim flagged</span>
+                                            </div>
+                                            <div className="flex items-center space-x-2 text-blue-600 dark:text-blue-400">
+                                                <i className="fas fa-spinner fa-spin"></i>
+                                                <span>Verifying income claim...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {result && (
+                            <div className="space-y-6">
+                                {/* Header with Call ID */}
+                                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border-2 border-medium-teal">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <h2 className="text-2xl font-bold text-navy dark:text-white">Call Analysis <span className="text-gray-400">/ #CN-2024-892</span></h2>
+                                            <p className="text-sm text-gray-500">Processed on {new Date().toLocaleDateString()}</p>
+                                        </div>
+                                        <div className="flex items-center space-x-2 text-sm">
+                                            <span className="text-gray-500">Agent:</span>
+                                            <div className="w-8 h-8 bg-medium-teal rounded-full flex items-center justify-center text-white font-bold">
+                                                JD
+                                            </div>
+                                            <span className="font-medium text-navy dark:text-white">J. Doe</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Summary Cards - Enhanced */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 card-hover border-2 border-medium-teal">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">PAYMENT INTENT</p>
+                                                <p className="text-3xl font-bold text-navy dark:text-white">{result.payment_intent}</p>
+                                                <div className="mt-2 flex items-center space-x-1">
+                                                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                                                        <div className="bg-medium-teal h-1.5 rounded-full" style={{width: '85%'}}></div>
+                                                    </div>
+                                                    <span className="text-xs text-gray-500">85%</span>
+                                                </div>
+                                            </div>
+                                            <i className="fas fa-bullseye text-4xl text-medium-teal"></i>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 card-hover border-2 border-coral">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">CREDIBILITY SCORE</p>
+                                                <p className="text-3xl font-bold text-navy dark:text-white">
+                                                    {(result.credibility_score * 100).toFixed(0)}%
+                                                </p>
+                                                <p className="text-xs text-green-600 mt-2">
+                                                    <i className="fas fa-arrow-up mr-1"></i>+12% from avg
+                                                </p>
+                                            </div>
+                                            <i className="fas fa-star text-4xl text-coral"></i>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 card-hover border-2 border-light-teal">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">RISK LEVEL</p>
+                                                <span className={`inline-block px-4 py-1.5 rounded-full text-white text-sm font-bold ${getRiskColor(result.risk_flag)}`}>
+                                                    {result.risk_flag}
+                                                </span>
+                                                <p className="text-xs text-gray-500 mt-2">Medium confidence</p>
+                                            </div>
+                                            <i className="fas fa-exclamation-triangle text-4xl text-orange-500"></i>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 card-hover border-2 border-navy">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">BUSINESS STATUS</p>
+                                                <p className="text-lg font-bold text-green-600">
+                                                    {result.business_verified ? '✓ Verified' : '✗ Not Found'}
+                                                </p>
+                                                <p className="text-xs text-gray-500 mt-2">via Backboard.io</p>
+                                            </div>
+                                            <i className="fas fa-building text-4xl text-green-500"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Main Content Grid */}
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                    {/* Transcript with Audio Visualization */}
+                                    <div className="lg:col-span-2 space-y-4">
+                                        {/* Audio Player */}
+                                        <div className="bg-navy dark:bg-gray-800 rounded-xl shadow-md p-6 border-2 border-medium-teal">
+                                            <div className="flex items-center justify-between mb-4">
+                                                <div className="flex items-center space-x-2">
+                                                    <div className="processing-dot"></div>
+                                                    <h3 className="text-lg font-bold text-white">AUDIO TRANSCRIPT</h3>
+                                                </div>
+                                                <span className="text-xs text-green-400">Processed</span>
+                                            </div>
+                                            <div className="waveform mb-4">
+                                                <div className="wave-bar"></div>
+                                                <div className="wave-bar"></div>
+                                                <div className="wave-bar"></div>
+                                                <div className="wave-bar"></div>
+                                                <div className="wave-bar"></div>
+                                                <div className="wave-bar"></div>
+                                                <div className="wave-bar"></div>
+                                                <div className="wave-bar"></div>
+                                                <div className="wave-bar"></div>
+                                                <div className="wave-bar"></div>
+                                                <div className="wave-bar"></div>
+                                                <div className="wave-bar"></div>
+                                                <div className="wave-bar"></div>
+                                                <div className="wave-bar"></div>
+                                                <div className="wave-bar"></div>
+                                            </div>
+                                        </div>
+
+                                        {/* Transcript */}
+                                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-2 border-light-teal">
+                                            <h3 className="text-xl font-bold text-navy dark:text-white mb-4 flex items-center">
+                                                <i className="fas fa-comment-dots mr-2 text-medium-teal"></i>
+                                                Call Transcript
+                                            </h3>
+                                            <div className="bg-cream dark:bg-gray-700 rounded-lg p-4 text-navy dark:text-gray-300 leading-relaxed text-sm space-y-3">
+                                                <div>
+                                                    <span className="font-semibold text-medium-teal">Agent (00:00):</span>
+                                                    <p>Hello sir, I understand your concern.</p>
+                                                </div>
+                                                <div>
+                                                    <span className="font-semibold text-purple-500">Customer (00:05):</span>
+                                                    <p>I want to assure you that I will make <span className="highlight-claim">the payment by the 15th of February</span>. My <span className="highlight-claim">textile business</span> has been experiencing some temporary cash flow issues due to delayed payments from our clients, but we have confirmed orders coming in next week. I've been running this business for <span className="highlight-claim">8 years</span> and have always maintained good credit. I just need a few more days to arrange the funds.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Risk Assessment Panel */}
+                                    <div className="space-y-4">
+                                        {/* Circular Credibility Gauge */}
+                                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-2 border-coral text-center">
+                                            <h3 className="text-sm font-bold text-navy dark:text-white mb-4">RISK ASSESSMENT</h3>
+                                            <div className="flex justify-center mb-4">
+                                                <div className="circular-progress">
+                                                    <svg width="140" height="140">
+                                                        <circle className="progress-bg" cx="70" cy="70" r="60"></circle>
+                                                        <circle 
+                                                            className="progress-bar-circle" 
+                                                            cx="70" 
+                                                            cy="70" 
+                                                            r="60"
+                                                            strokeDasharray="377"
+                                                            strokeDashoffset={377 - (377 * result.credibility_score)}
+                                                        ></circle>
+                                                    </svg>
+                                                    <div style={{position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)'}}>
+                                                        <div className="text-4xl font-bold text-green-500">{(result.credibility_score * 100).toFixed(0)}</div>
+                                                        <div className="text-xs text-gray-500 uppercase">Credibility</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Key Insights */}
+                                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-2 border-light-teal">
+                                            <h3 className="text-lg font-bold text-navy dark:text-white mb-4 flex items-center">
+                                                <i className="fas fa-lightbulb mr-2 text-coral"></i>
+                                                Key Insights
+                                            </h3>
+                                            <div className="space-y-3">
+                                                <div className="flex items-start space-x-3 p-2 rounded bg-green-50 dark:bg-green-900 dark:bg-opacity-20">
+                                                    <i className="fas fa-check-circle text-green-500 mt-0.5"></i>
+                                                    <div className="text-sm">
+                                                        <div className="font-semibold text-navy dark:text-white">Payment Promise</div>
+                                                        <div className="text-gray-600 dark:text-gray-400">DETECTED</div>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-start space-x-3 p-2 rounded bg-yellow-50 dark:bg-yellow-900 dark:bg-opacity-20">
+                                                    <i className="fas fa-exclamation-triangle text-yellow-600 mt-0.5"></i>
+                                                    <div className="text-sm">
+                                                        <div className="font-semibold text-navy dark:text-white">Hardship Claim</div>
+                                                        <div className="text-gray-600 dark:text-gray-400">FLAGGED</div>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-start space-x-3 p-2 rounded bg-green-50 dark:bg-green-900 dark:bg-opacity-20">
+                                                    <i className="fas fa-check-circle text-green-500 mt-0.5"></i>
+                                                    <div className="text-sm">
+                                                        <div className="font-semibold text-navy dark:text-white">Income Verify</div>
+                                                        <div className="text-gray-600 dark:text-gray-400">MATCHED</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Financial Claims */}
+                                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-2 border-navy">
+                                    <h3 className="text-xl font-bold text-navy dark:text-white mb-6 flex items-center">
+                                        <i className="fas fa-clipboard-check mr-2 text-navy dark:text-blue-400"></i>
+                                        Extracted Financial Claims
+                                    </h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                        <div className="bg-cream dark:bg-gray-700 rounded-lg p-4 border-l-4 border-medium-teal">
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">PAYMENT PROMISE</p>
+                                            <p className="text-2xl font-bold text-navy dark:text-white">
+                                                {result.payment_promise ? 'Yes' : 'No'}
+                                            </p>
+                                        </div>
+                                        <div className="bg-cream dark:bg-gray-700 rounded-lg p-4 border-l-4 border-coral">
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">PROMISED DATE</p>
+                                            <p className="text-xl font-bold text-navy dark:text-white">{result.payment_date}</p>
+                                        </div>
+                                        <div className="bg-cream dark:bg-gray-700 rounded-lg p-4 border-l-4 border-green-500">
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">BUSINESS TYPE</p>
+                                            <p className="text-lg font-semibold text-navy dark:text-white">{result.business_type}</p>
+                                        </div>
+                                        <div className="bg-cream dark:bg-gray-700 rounded-lg p-4 border-l-4 border-orange-500">
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">STRESS LEVEL</p>
+                                            <p className="text-2xl font-bold text-navy dark:text-white">{result.stress_level}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Verification Results */}
+                                <div className="rounded-xl shadow-md p-6 border-2 border-medium-teal bg-cream dark:bg-gray-800">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h3 className="text-xl font-bold text-navy dark:text-white flex items-center">
+                                            <i className="fas fa-shield-alt mr-2 text-medium-teal"></i>
+                                            Backboard.io Verification
+                                        </h3>
+                                        <span className="px-4 py-2 bg-medium-teal rounded-full text-sm font-semibold text-white shadow-sm">
+                                            Powered by Backboard.io
+                                        </span>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <div className="bg-white dark:bg-gray-700 rounded-lg p-6 shadow-sm">
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">VERIFICATION STATUS</p>
+                                            <div className="flex items-center space-x-3">
+                                                <i className="fas fa-check-circle text-3xl text-green-500"></i>
+                                                <span className="text-2xl font-bold text-green-700 dark:text-green-400">Verified</span>
+                                            </div>
+                                        </div>
+                                        <div className="bg-white dark:bg-gray-700 rounded-lg p-6 shadow-sm">
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">REGISTERED INDUSTRY</p>
+                                            <p className="text-lg font-semibold text-navy dark:text-white">{result.registered_industry}</p>
+                                        </div>
+                                        <div className="bg-white dark:bg-gray-700 rounded-lg p-6 shadow-sm">
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">RISK BAND</p>
+                                            <span className="inline-block px-4 py-2 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-full text-lg font-bold">
+                                                {result.risk_band}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Action Buttons */}
+                                <div className="flex justify-center space-x-4">
+                                    <button
+                                        onClick={() => { setFile(null); setResult(null); }}
+                                        className="px-8 py-3 bg-navy text-white font-semibold rounded-lg hover:bg-opacity-90 transition flex items-center space-x-2"
+                                    >
+                                        <i className="fas fa-plus"></i>
+                                        <span>Process Another Call</span>
+                                    </button>
+                                    <button className="px-8 py-3 bg-coral text-white font-semibold rounded-lg hover:opacity-90 transition flex items-center space-x-2">
+                                        <i className="fas fa-download"></i>
+                                        <span>Export Report</span>
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
